@@ -1,3 +1,0 @@
-{"timestamp":"2025-12-22 05:24:29","name":"nova","email":"zahrasabbrina889@gmail.com","message":"haloo boy"}
-{"timestamp":"2025-12-22 05:30:09","name":"tania","email":"tania@gmail.com","message":"apa kabar kamu?"}
-{"timestamp":"2025-12-22 05:36:20","name":"cipung","email":"cipungganteng@gmai.com","message":"bagaimana kabar kamu?"}

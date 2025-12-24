@@ -32,50 +32,41 @@
         <div class="guestbook-section" style="margin-top: 0; animation-delay: 0.4s;">
             <div class="guestbook-list" style="max-height: none;">
             <?php
-            if (file_exists('buku_tamu.txt')) {
-                // Baca file per baris
-                $entries = file('buku_tamu.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-                
-                if (!empty($entries)) {
-                    // Tampilkan yang terbaru dulu (reverse array)
-                    $entries = array_reverse($entries);
-                    
-                    foreach ($entries as $entry) {
-                        // Decode JSON menjadi array PHP
-                        $data = json_decode($entry, true);
-                        
-                        // Pastikan data valid sebelum ditampilkan
-                        if ($data) {
+            include 'koneksi.php'; // Hubungkan ke database
+
+            // Query untuk mengambil data dari tabel 'tamu' diurutkan dari yang terbaru
+            $sql = "SELECT name, email, message, created_at FROM tamu ORDER BY created_at DESC";
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+                // Loop melalui hasil query
+                while($row = $result->fetch_assoc()) {
             ?>
-                            <div class="guestbook-item">
-                                <div class="guestbook-header">
-                                    <div class="avatar">
-                                        <?php echo strtoupper(substr($data['name'], 0, 1)); ?>
-                                    </div>
-                                    <div>
-                                        <div class="guestbook-name"><?php echo htmlspecialchars($data['name']); ?></div>
-                                        <div class="guestbook-time"><?php echo date('d M Y, H:i', strtotime($data['timestamp'])); ?></div>
-                                    </div>
-                                </div>
-                                <p class="guestbook-message">
-                                    "<?php echo htmlspecialchars($data['message']); ?>"
-                                </p>
+                    <div class="guestbook-item">
+                        <div class="guestbook-header">
+                            <div class="avatar">
+                                <?php echo strtoupper(substr($row['name'], 0, 1)); ?>
                             </div>
+                            <div>
+                                <div class="guestbook-name"><?php echo htmlspecialchars($row['name']); ?></div>
+                                <div class="guestbook-time"><?php echo date('d M Y, H:i', strtotime($row['created_at'])); ?></div>
+                            </div>
+                        </div>
+                        <p class="guestbook-message">
+                            "<?php echo htmlspecialchars($row['message']); ?>"
+                        </p>
+                    </div>
             <?php
-                        }
-                    }
-                } else {
-                    echo '<div style="text-align: center; padding: 3rem; border: 1px dashed #d1d5db; border-radius: 0.75rem; color: #9ca3af; background: white;">
-                            <p style="margin-bottom: 0.5rem; font-weight: 600;">Belum ada pesan</p>
-                            <p style="font-size: 0.875rem;">Jadilah orang pertama yang mengisi buku tamu ini!</p>
-                          </div>';
                 }
             } else {
-                 echo '<div style="text-align: center; padding: 3rem; border: 1px dashed #d1d5db; border-radius: 0.75rem; color: #9ca3af; background: white;">
-                        <p style="margin-bottom: 0.5rem; font-weight: 600;">File data belum dibuat</p>
-                        <p style="font-size: 0.875rem;">Silakan isi form terlebih dahulu.</p>
+                echo '<div style="text-align: center; padding: 3rem; border: 1px dashed #d1d5db; border-radius: 0.75rem; color: #9ca3af; background: white;">
+                        <p style="margin-bottom: 0.5rem; font-weight: 600;">Belum ada pesan</p>
+                        <p style="font-size: 0.875rem;">Jadilah orang pertama yang mengisi buku tamu ini!</p>
                       </div>';
             }
+            
+            // Tutup koneksi (opsional di sini karena PHP akan menutupnya otomatis di akhir script, tapi good practice)
+            $conn->close();
             ?>
             </div>
         </div>
